@@ -1,0 +1,2 @@
+curl -v 'http://localhost:8080/upload' -H 'Content-Type: application/octet-stream' --data-binary @demo/1/demo.wasm
+curl -X GET -G -v 'http://localhost:8080/compute' -d op1=3 -d op2=5

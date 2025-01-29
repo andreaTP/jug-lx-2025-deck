@@ -1,0 +1,69 @@
+///usr/bin/env jbang "$0" "$@" ; exit $?
+
+//REPOS jitpack
+//DEPS com.github.andreaTP.chicory:wasi:re-enable-jitpack-6b3e236206-1
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import com.dylibso.chicory.log.Logger;
+import com.dylibso.chicory.log.SystemLogger;
+import com.dylibso.chicory.runtime.ExternalValues;
+import com.dylibso.chicory.runtime.Instance;
+import com.dylibso.chicory.runtime.Memory;
+import com.dylibso.chicory.wasm.Module;
+import com.dylibso.chicory.wasm.Parser;
+import com.dylibso.chicory.wasi.WasiOptions;
+import com.dylibso.chicory.wasi.WasiPreview1;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+public class js {
+
+    public static void main(String... args) {
+        if (args.length != 1) {
+            System.out.println("Please provide the Javascript code to run!");
+        }
+        ByteArrayInputStream stdin = new ByteArrayInputStream("".getBytes(UTF_8));
+        var stdout = new ByteArrayOutputStream();
+        var stderr = new ByteArrayOutputStream();
+
+        var wasiOpts =
+                WasiOptions.builder()
+                        .withStdout(stdout)
+                        .withStderr(stderr)
+                        .withStdin(stdin)
+                        .build();
+        var logger = new SystemLogger() {
+            @Override
+            public void log(Level level, String msg, Throwable throwable) {}
+        };
+
+        var wasi = new WasiPreview1(logger, wasiOpts);
+        var quickjs =
+                Instance.builder(Parser.parse(new File("quickjs-provider.javy-dynamic.wasm")))
+                        .withExternalValues(new ExternalValues(wasi.toHostFunctions()))
+                        .build();
+
+        byte[] jsCode = (args[0]).getBytes(UTF_8);
+        var ptr =
+                quickjs.export("canonical_abi_realloc")
+                        .apply(
+                                0, // original_ptr
+                                0, // original_size
+                                1, // alignment
+                                jsCode.length // new size
+                                )[0];
+
+        quickjs.memory().write((int) ptr, jsCode);
+        var aggregatedCodePtr = quickjs.export("compile_src").apply(ptr, jsCode.length)[0];
+
+        var codePtr = quickjs.memory().readI32((int) aggregatedCodePtr); // 32 bit
+        var codeLength = quickjs.memory().readU32((int) aggregatedCodePtr + 4);
+
+        quickjs.export("eval_bytecode").apply(codePtr, codeLength);
+
+        System.err.println(stderr.toString(UTF_8));
+        System.err.println(stdout.toString(UTF_8));
+    }
+}

@@ -1,0 +1,20 @@
+
+We are going to make a Chicory release by the end of the week, for now:
+
+```bash
+git clone https://github.com/dylibso/chicory.git
+cd chicory
+mvn -Dquickly
+```
+
+after you can run the script with:
+
+```bash
+jbang js "console.log('Hey Max!');"
+```
+
+Or to make Java ppl chuckle:
+
+```bash
+jbang js "console.log('Hey Max! Enjoy Javascript ' + 'ba'+(+'a')+'as');"
+```
