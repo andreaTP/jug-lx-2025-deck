@@ -1,9 +1,5 @@
 package com.example.springboot;
 
-import com.dylibso.chicory.runtime.Instance;
-import com.dylibso.chicory.wasm.Module;
-import com.dylibso.chicory.wasm.Parser;
-import com.dylibso.chicory.wasm.types.Value;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,16 +31,10 @@ public class WasmController {
 		}
 	}
 
-	private Module module;
-
 	private void uploadImpl(byte[] wasmBytes) {
-		module = Parser.parse(wasmBytes);
 	}
 
 	private int computeImpl(int op1, int op2) {
-		var instance = Instance.builder(module).build();
-		var result = instance.export("operation").apply(op1, op2)[0];
-
-		return (int) result;
+		return -1;
 	}
 }

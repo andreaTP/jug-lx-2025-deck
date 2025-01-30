@@ -1,13 +1,11 @@
 package com.example.springboot;
 
-import com.dylibso.chicory.log.Logger;
-import com.dylibso.chicory.log.SystemLogger;
-import com.dylibso.chicory.runtime.ExternalValues;
+import com.dylibso.chicory.runtime.ImportValues;
 import com.dylibso.chicory.runtime.Instance;
 import com.dylibso.chicory.wasi.WasiOptions;
 import com.dylibso.chicory.wasi.WasiPreview1;
-import com.dylibso.chicory.wasm.Module;
 import com.dylibso.chicory.wasm.Parser;
+import com.dylibso.chicory.wasm.WasmModule;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,9 +47,7 @@ public class WasmController {
 		}
 	}
 
-	private final Logger logger = new SystemLogger();
-
-	private Module WASM_INTERP_MODULE = Parser.parse(WasmController.class.getResourceAsStream("/wasm-interp"));
+	private WasmModule WASM_INTERP_MODULE = Parser.parse(WasmController.class.getResourceAsStream("/wasm-interp"));
 	private byte[] wasmModule;
 
 	private void uploadImpl(byte[] wasmBytes) {
@@ -88,12 +84,12 @@ public class WasmController {
 			));
 			optsBuilder.withStdout(stdout);
 
-			var wasi = new WasiPreview1(this.logger, optsBuilder.build());
-			var imports = new ExternalValues(wasi.toHostFunctions());
+			var wasi = WasiPreview1.builder().withOptions(optsBuilder.build()).build();
+			var imports = ImportValues.builder().addFunction(wasi.toHostFunctions()).build();
 
 			Instance
 					.builder(WASM_INTERP_MODULE)
-					.withExternalValues(imports)
+					.withImportValues(imports)
 					.build();
 			var result = new String(stdout.toByteArray());
 			// example output:

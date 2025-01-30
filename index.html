@@ -22,7 +22,7 @@
   <!-- Reveal.js styles -->
   <link rel="stylesheet" href="packages/revealjs/dist/reset.css">
   <link rel="stylesheet" href="packages/revealjs/dist/reveal.css">
-  <link rel="stylesheet" href="packages/revealjs/dist/theme/league.css" id="theme">
+  <link rel="stylesheet" href="packages/revealjs/dist/theme/serif.css" id="theme">
 
   <!-- Theme used for syntax highlighting of code -->
   <link rel="stylesheet" href="packages/revealjs/plugin/highlight/github-gist.css" id="highlight-theme">
@@ -236,18 +236,35 @@
 
       <section>
         <section data-markdown>
-          <!-- GWT / Applet etc. -->
           <textarea data-template>
             # The two sides of it
 
-            <img style="width: 50%;" src="imgs/wasm_bytecode.png">
+            <img style="width: 50%;" src="imgs/wasm_bytecode_chicory.png">
             <br/>
 
-            - compile to Wasm<!-- .element: class="fragment" -->
-            - execute Wasm code<!-- .element: class="fragment" -->
+            - compile to Wasm
+          </textarea>
+        </section>
+        <section data-markdown>
+          <textarea data-template>
+            # The two sides of it
 
+            <img style="width: 50%;" src="imgs/wasm_bytecode_chicory_only.png">
             <br/>
-            <sub><sup><a href="https://kerkour.com/webassembly-wasi-preview2">image source</a></sup></sub>
+
+            - execute Wasm code
+          </textarea>
+        </section>
+      </section>
+
+      <section>
+        <section data-markdown>
+          <textarea data-template>
+            # Chicory
+
+            https://github.com/dylibso/chicory
+                
+            <img src="./imgs/chicory1.png" height="20%" width="20%" style="height: 20%; width: 20%;"></img>
           </textarea>
         </section>
       </section>
@@ -319,12 +336,13 @@
         <textarea data-template>
           # Thanks and Q&A
 
-          <img style="width: 10%;" src="imgs/chicory1.png">
+          <img style="width: 20%;" src="./imgs/qr.png"></img>
           <br/>
 
           https://github.com/dylibso/chicory
           <br/>
           https://github.com/andreaTP/jug-lx-2025-deck
+
         </textarea>
       </section>
     </div>

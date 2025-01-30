@@ -1,5 +1,5 @@
-# Devoxx BE 2024
+# Lisbon JUG
 
-Tools in Action
+> 30/1/2025
 
 ## Meet Chicory, exploit the power of WebAssembly on the server side!

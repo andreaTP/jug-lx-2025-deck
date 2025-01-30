@@ -1,10 +1,8 @@
 package com.example.springboot;
 
 import com.dylibso.chicory.runtime.Instance;
-import com.dylibso.chicory.wasm.Module;
 import com.dylibso.chicory.wasm.Parser;
-import com.dylibso.chicory.wasm.types.Value;
-import jakarta.servlet.ServletInputStream;
+import com.dylibso.chicory.wasm.WasmModule;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 @RestController
 public class WasmController {
@@ -38,7 +34,7 @@ public class WasmController {
 		}
 	}
 
-	private Module module;
+	private WasmModule module;
 
 	private void uploadImpl(byte[] wasmBytes) {
 		module = Parser.parse(wasmBytes);
@@ -46,9 +42,11 @@ public class WasmController {
 
 	private int computeImpl(int op1, int op2) {
 		if (module == null) {
-			throw new RuntimeException("you need to upload a wasm module first");
+			throw new RuntimeException("Wasm module not provided");
 		}
-		Instance instance = Instance.builder(module).build();
-		return (int) instance.export("operation").apply(op1, op2)[0];
+		var instance = Instance.builder(module).build();
+		var result = (int) instance.exports().function("operation").apply(op1, op2)[0];
+
+		return result;
 	}
 }
